@@ -17,13 +17,15 @@ public final class PassiveReplyBuilder {
      */
     public static String replyText(String toUserName, String fromUserName, String content) {
         long timestamp = System.currentTimeMillis() / 1000L;
-        return "<xml>\n"
-                + "<ToUserName><![CDATA[" + escapeCdata(toUserName) + "]]></ToUserName>\n"
-                + "<FromUserName><![CDATA[" + escapeCdata(fromUserName) + "]]></FromUserName>\n"
-                + "<CreateTime>" + timestamp + "</CreateTime>\n"
-                + "<MsgType><![CDATA[text]]></MsgType>\n"
-                + "<Content><![CDATA[" + escapeCdata(content) + "]]></Content>\n"
-                + "</xml>";
+        return """
+                <xml>
+                <ToUserName><![CDATA[%s]]></ToUserName>
+                <FromUserName><![CDATA[%s]]></FromUserName>
+                <CreateTime>%d</CreateTime>
+                <MsgType><![CDATA[text]]></MsgType>
+                <Content><![CDATA[%s]]></Content>
+                </xml>""".formatted(
+                        escapeCdata(toUserName), escapeCdata(fromUserName), timestamp, escapeCdata(content));
     }
 
     /**
@@ -39,13 +41,15 @@ public final class PassiveReplyBuilder {
      */
     public static String replyImage(String toUserName, String fromUserName, String mediaId) {
         long timestamp = System.currentTimeMillis() / 1000L;
-        return "<xml>\n"
-                + "<ToUserName><![CDATA[" + escapeCdata(toUserName) + "]]></ToUserName>\n"
-                + "<FromUserName><![CDATA[" + escapeCdata(fromUserName) + "]]></FromUserName>\n"
-                + "<CreateTime>" + timestamp + "</CreateTime>\n"
-                + "<MsgType><![CDATA[image]]></MsgType>\n"
-                + "<Image><MediaId><![CDATA[" + escapeCdata(mediaId) + "]]></MediaId></Image>\n"
-                + "</xml>";
+        return """
+                <xml>
+                <ToUserName><![CDATA[%s]]></ToUserName>
+                <FromUserName><![CDATA[%s]]></FromUserName>
+                <CreateTime>%d</CreateTime>
+                <MsgType><![CDATA[image]]></MsgType>
+                <Image><MediaId><![CDATA[%s]]></MediaId></Image>
+                </xml>""".formatted(
+                        escapeCdata(toUserName), escapeCdata(fromUserName), timestamp, escapeCdata(mediaId));
     }
 
     /**
@@ -53,13 +57,15 @@ public final class PassiveReplyBuilder {
      */
     public static String replyVoice(String toUserName, String fromUserName, String mediaId) {
         long timestamp = System.currentTimeMillis() / 1000L;
-        return "<xml>\n"
-                + "<ToUserName><![CDATA[" + escapeCdata(toUserName) + "]]></ToUserName>\n"
-                + "<FromUserName><![CDATA[" + escapeCdata(fromUserName) + "]]></FromUserName>\n"
-                + "<CreateTime>" + timestamp + "</CreateTime>\n"
-                + "<MsgType><![CDATA[voice]]></MsgType>\n"
-                + "<Voice><MediaId><![CDATA[" + escapeCdata(mediaId) + "]]></MediaId></Voice>\n"
-                + "</xml>";
+        return """
+                <xml>
+                <ToUserName><![CDATA[%s]]></ToUserName>
+                <FromUserName><![CDATA[%s]]></FromUserName>
+                <CreateTime>%d</CreateTime>
+                <MsgType><![CDATA[voice]]></MsgType>
+                <Voice><MediaId><![CDATA[%s]]></MediaId></Voice>
+                </xml>""".formatted(
+                        escapeCdata(toUserName), escapeCdata(fromUserName), timestamp, escapeCdata(mediaId));
     }
 
     /**
@@ -67,17 +73,20 @@ public final class PassiveReplyBuilder {
      */
     public static String replyVideo(String toUserName, String fromUserName, String mediaId, String title, String description) {
         long timestamp = System.currentTimeMillis() / 1000L;
-        return "<xml>\n"
-                + "<ToUserName><![CDATA[" + escapeCdata(toUserName) + "]]></ToUserName>\n"
-                + "<FromUserName><![CDATA[" + escapeCdata(fromUserName) + "]]></FromUserName>\n"
-                + "<CreateTime>" + timestamp + "</CreateTime>\n"
-                + "<MsgType><![CDATA[video]]></MsgType>\n"
-                + "<Video>\n"
-                + "<MediaId><![CDATA[" + escapeCdata(mediaId) + "]]></MediaId>\n"
-                + "<Title><![CDATA[" + escapeCdata(title) + "]]></Title>\n"
-                + "<Description><![CDATA[" + escapeCdata(description) + "]]></Description>\n"
-                + "</Video>\n"
-                + "</xml>";
+        return """
+                <xml>
+                <ToUserName><![CDATA[%s]]></ToUserName>
+                <FromUserName><![CDATA[%s]]></FromUserName>
+                <CreateTime>%d</CreateTime>
+                <MsgType><![CDATA[video]]></MsgType>
+                <Video>
+                <MediaId><![CDATA[%s]]></MediaId>
+                <Title><![CDATA[%s]]></Title>
+                <Description><![CDATA[%s]]></Description>
+                </Video>
+                </xml>""".formatted(
+                        escapeCdata(toUserName), escapeCdata(fromUserName), timestamp,
+                        escapeCdata(mediaId), escapeCdata(title), escapeCdata(description));
     }
 
     /**
@@ -93,19 +102,23 @@ public final class PassiveReplyBuilder {
             String thumbMediaId
     ) {
         long timestamp = System.currentTimeMillis() / 1000L;
-        return "<xml>\n"
-                + "<ToUserName><![CDATA[" + escapeCdata(toUserName) + "]]></ToUserName>\n"
-                + "<FromUserName><![CDATA[" + escapeCdata(fromUserName) + "]]></FromUserName>\n"
-                + "<CreateTime>" + timestamp + "</CreateTime>\n"
-                + "<MsgType><![CDATA[music]]></MsgType>\n"
-                + "<Music>\n"
-                + "<Title><![CDATA[" + escapeCdata(title) + "]]></Title>\n"
-                + "<Description><![CDATA[" + escapeCdata(description) + "]]></Description>\n"
-                + "<MusicUrl><![CDATA[" + escapeCdata(musicUrl) + "]]></MusicUrl>\n"
-                + "<HQMusicUrl><![CDATA[" + escapeCdata(hqMusicUrl) + "]]></HQMusicUrl>\n"
-                + "<ThumbMediaId><![CDATA[" + escapeCdata(thumbMediaId) + "]]></ThumbMediaId>\n"
-                + "</Music>\n"
-                + "</xml>";
+        return """
+                <xml>
+                <ToUserName><![CDATA[%s]]></ToUserName>
+                <FromUserName><![CDATA[%s]]></FromUserName>
+                <CreateTime>%d</CreateTime>
+                <MsgType><![CDATA[music]]></MsgType>
+                <Music>
+                <Title><![CDATA[%s]]></Title>
+                <Description><![CDATA[%s]]></Description>
+                <MusicUrl><![CDATA[%s]]></MusicUrl>
+                <HQMusicUrl><![CDATA[%s]]></HQMusicUrl>
+                <ThumbMediaId><![CDATA[%s]]></ThumbMediaId>
+                </Music>
+                </xml>""".formatted(
+                        escapeCdata(toUserName), escapeCdata(fromUserName), timestamp,
+                        escapeCdata(title), escapeCdata(description), escapeCdata(musicUrl),
+                        escapeCdata(hqMusicUrl), escapeCdata(thumbMediaId));
     }
 
     /**
@@ -115,22 +128,31 @@ public final class PassiveReplyBuilder {
         Objects.requireNonNull(articles, "articles must not be null");
         long timestamp = System.currentTimeMillis() / 1000L;
         StringBuilder sb = new StringBuilder();
-        sb.append("<xml>\n")
-                .append("<ToUserName><![CDATA[").append(escapeCdata(toUserName)).append("]]></ToUserName>\n")
-                .append("<FromUserName><![CDATA[").append(escapeCdata(fromUserName)).append("]]></FromUserName>\n")
-                .append("<CreateTime>").append(timestamp).append("</CreateTime>\n")
-                .append("<MsgType><![CDATA[news]]></MsgType>\n")
-                .append("<ArticleCount>").append(articles.size()).append("</ArticleCount>\n")
-                .append("<Articles>\n");
+        sb.append("""
+                <xml>
+                <ToUserName><![CDATA[%s]]></ToUserName>
+                <FromUserName><![CDATA[%s]]></FromUserName>
+                <CreateTime>%d</CreateTime>
+                <MsgType><![CDATA[news]]></MsgType>
+                <ArticleCount>%d</ArticleCount>
+                <Articles>
+                """.formatted(
+                        escapeCdata(toUserName), escapeCdata(fromUserName), timestamp, articles.size()));
         for (ArticleItem item : articles) {
-            sb.append("<item>\n")
-                    .append("<Title><![CDATA[").append(escapeCdata(item.title())).append("]]></Title>\n")
-                    .append("<Description><![CDATA[").append(escapeCdata(item.description())).append("]]></Description>\n")
-                    .append("<PicUrl><![CDATA[").append(escapeCdata(item.picUrl())).append("]]></PicUrl>\n")
-                    .append("<Url><![CDATA[").append(escapeCdata(item.url())).append("]]></Url>\n")
-                    .append("</item>\n");
+            sb.append("""
+                    <item>
+                    <Title><![CDATA[%s]]></Title>
+                    <Description><![CDATA[%s]]></Description>
+                    <PicUrl><![CDATA[%s]]></PicUrl>
+                    <Url><![CDATA[%s]]></Url>
+                    </item>
+                    """.formatted(
+                            escapeCdata(item.title()), escapeCdata(item.description()),
+                            escapeCdata(item.picUrl()), escapeCdata(item.url())));
         }
-        sb.append("</Articles>\n</xml>");
+        sb.append("""
+                </Articles>
+                </xml>""");
         return sb.toString();
     }
 
@@ -142,15 +164,21 @@ public final class PassiveReplyBuilder {
     public static String transferToCustomerService(String toUserName, String fromUserName, String kfAccount) {
         long timestamp = System.currentTimeMillis() / 1000L;
         StringBuilder sb = new StringBuilder();
-        sb.append("<xml>\n")
-                .append("<ToUserName><![CDATA[").append(escapeCdata(toUserName)).append("]]></ToUserName>\n")
-                .append("<FromUserName><![CDATA[").append(escapeCdata(fromUserName)).append("]]></FromUserName>\n")
-                .append("<CreateTime>").append(timestamp).append("</CreateTime>\n")
-                .append("<MsgType><![CDATA[transfer_customer_service]]></MsgType>\n");
+        sb.append("""
+                <xml>
+                <ToUserName><![CDATA[%s]]></ToUserName>
+                <FromUserName><![CDATA[%s]]></FromUserName>
+                <CreateTime>%d</CreateTime>
+                <MsgType><![CDATA[transfer_customer_service]]></MsgType>
+                """.formatted(
+                        escapeCdata(toUserName), escapeCdata(fromUserName), timestamp));
         if (kfAccount != null && !kfAccount.isBlank()) {
-            sb.append("<TransInfo><KfAccount><![CDATA[").append(escapeCdata(kfAccount)).append("]]></KfAccount></TransInfo>\n");
+            sb.append("""
+                    <TransInfo><KfAccount><![CDATA[%s]]></KfAccount></TransInfo>
+                    """.formatted(escapeCdata(kfAccount)));
         }
-        sb.append("</xml>");
+        sb.append("""
+                </xml>""");
         return sb.toString();
     }
 
