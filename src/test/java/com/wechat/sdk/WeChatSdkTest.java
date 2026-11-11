@@ -31,6 +31,7 @@ import com.wechat.sdk.model.user.UserInfo;
 import com.wechat.sdk.model.user.UserListResponse;
 import com.wechat.sdk.model.user.UserTag;
 import com.wechat.sdk.token.DefaultAccessTokenManager;
+import com.wechat.sdk.util.JsonUtils;
 import com.wechat.sdk.webhook.PassiveReplyBuilder;
 import com.wechat.sdk.webhook.WeChatMessageRouter;
 import com.wechat.sdk.webhook.WebhookMessage;
@@ -39,6 +40,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -360,6 +362,63 @@ class WeChatSdkTest {
         assertEquals(48001, ex.getErrCode());
         assertEquals("654321", ex.getRid());
         assertEquals("/cgi-bin/menu/delete", ex.getApiPath());
+    }
+
+    /**
+     * 验证 JDK 21 语言特性改造后的行为保持不变：
+     * switch 模式匹配（含 case null）、switch 表达式、record 值语义。
+     */
+    @Test
+    void testJdk21LanguageFeatureBehaviors() {
+        // JsonUtils.toJson: case null -> "{}"，字符串原样返回，其余对象走 Jackson
+        assertEquals("{}", JsonUtils.toJson(null));
+        assertEquals("raw-json", JsonUtils.toJson("raw-json"));
+        assertEquals("{\"k\":\"v\"}", JsonUtils.toJson(Map.of("k", "v")));
+
+        // WeChatApiException.isAccessTokenInvalid: switch 表达式匹配 40001/40014/42001
+        assertTrue(new WeChatApiException(40001, "invalid", null, null).isAccessTokenInvalid());
+        assertTrue(new WeChatApiException(40014, "invalid", null, null).isAccessTokenInvalid());
+        assertTrue(new WeChatApiException(42001, "expired", null, null).isAccessTokenInvalid());
+        assertFalse(new WeChatApiException(48001, "unauthorized", null, null).isAccessTokenInvalid());
+
+        // WebhookMessage 为 record：构造参数不变，新增值语义 equals 与 rawFields() 访问器
+        WebhookMessage textMessage = new WebhookMessage(Map.of("MsgType", "text"));
+        assertEquals(textMessage, new WebhookMessage(Map.of("MsgType", "text")));
+        assertEquals("text", textMessage.rawFields().get("MsgType"));
+        assertEquals(Map.of("MsgType", "text"), textMessage.getRawFields());
+    }
+
+    /**
+     * JS-SDK 签名原文必须与 JVM 默认 Locale 无关（timestamp 必须是 ASCII 数字）。
+     * 防止将来把拼接改成 String.formatted("%d") 而引入区域敏感回归。
+     */
+    @Test
+    void testJsApiSignatureIsLocaleIndependent() {
+        Locale previous = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.forLanguageTag("ar-EG"));
+            JsApiSignature signature = client.oauth().createJsApiSignature(
+                    "http://mp.weixin.qq.com?params=value#hash_ignored",
+                    "Wm3WZYTPz0wzccnW",
+                    1414587457L
+            );
+            assertEquals("0f9de62fce790f9a083d5c99e95740ceb90c27ed", signature.signature());
+        } finally {
+            Locale.setDefault(previous);
+        }
+    }
+
+    /**
+     * PKCS#7 整块边界：构造明文使 20 + plainLen + appIdLen 恰为 32 的倍数，
+     * 覆盖“整块对齐时补满 32 字节”的填充路径。
+     */
+    @Test
+    void testPkcs7FullBlockPaddingBoundary() {
+        WeChatCryptUtil cryptUtil = new WeChatCryptUtil(TEST_APP_ID, TEST_TOKEN, TEST_AES_KEY);
+        int plainLength = (32 - ((20 + TEST_APP_ID.length()) % 32)) % 32;
+        String plainText = "A".repeat(plainLength);
+        String cipherText = cryptUtil.encrypt("0123456789abcdef", plainText);
+        assertEquals(plainText, cryptUtil.decrypt(cipherText));
     }
 
     private void registerJson(String path, Function<RawHttpRequest, String> jsonGenerator) {

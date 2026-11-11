@@ -138,6 +138,8 @@ public class OAuthApiService {
         Objects.requireNonNull(nonceStr, "nonceStr must not be null");
         String cleanUrl = url.contains("#") ? url.substring(0, url.indexOf('#')) : url;
         String ticket = getJsApiTicket();
+        // 注意：签名原文必须保证与区域设置无关（timestamp 使用 ASCII 数字），
+        // 因此保持字符串拼接，不要改为受默认 Locale 影响的 String.formatted("%d")。
         String raw = "jsapi_ticket=" + ticket
                 + "&noncestr=" + nonceStr
                 + "&timestamp=" + timestamp

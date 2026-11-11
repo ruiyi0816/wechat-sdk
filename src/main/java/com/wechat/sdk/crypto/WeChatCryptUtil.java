@@ -48,12 +48,13 @@ public final class WeChatCryptUtil {
     public String encryptXml(String replyMsgXml, String timestamp, String nonce) {
         String encrypted = encrypt(generateRandomString(16), replyMsgXml);
         String signature = WeChatSignatureUtil.generateSignature(token, timestamp, nonce, encrypted);
-        return "<xml>\n"
-                + "<Encrypt><![CDATA[" + encrypted + "]]></Encrypt>\n"
-                + "<MsgSignature><![CDATA[" + signature + "]]></MsgSignature>\n"
-                + "<TimeStamp>" + timestamp + "</TimeStamp>\n"
-                + "<Nonce><![CDATA[" + nonce + "]]></Nonce>\n"
-                + "</xml>";
+        return """
+                <xml>
+                <Encrypt><![CDATA[%s]]></Encrypt>
+                <MsgSignature><![CDATA[%s]]></MsgSignature>
+                <TimeStamp>%s</TimeStamp>
+                <Nonce><![CDATA[%s]]></Nonce>
+                </xml>""".formatted(encrypted, signature, timestamp, nonce);
     }
 
     /**
@@ -153,10 +154,8 @@ public final class WeChatCryptUtil {
     }
 
     private static byte[] pkcs7Encode(int count) {
+        // 32 - (count % 32) 的取值恒在 1..32：整块对齐时补满 32 字节，其余补 1~31 字节。
         int amountToPad = PKCS7_BLOCK_SIZE - (count % PKCS7_BLOCK_SIZE);
-        if (amountToPad == 0) {
-            amountToPad = PKCS7_BLOCK_SIZE;
-        }
         byte padByte = (byte) (amountToPad & 0xFF);
         byte[] pads = new byte[amountToPad];
         Arrays.fill(pads, padByte);

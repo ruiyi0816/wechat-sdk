@@ -53,6 +53,9 @@ public class WeChatApiException extends WeChatException {
      * 42001: access_token 超时
      */
     public boolean isAccessTokenInvalid() {
-        return errCode == 40001 || errCode == 40014 || errCode == 42001;
+        return switch (errCode) {
+            case 40001, 40014, 42001 -> true;
+            default -> false;
+        };
     }
 }

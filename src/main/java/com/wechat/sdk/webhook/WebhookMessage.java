@@ -18,12 +18,10 @@ import java.util.Map;
  * 微信回调推送消息与事件统一载体（支持普通消息与各类事件推送）
  * 对应官方文档：接收普通消息 / 接收事件推送
  */
-public class WebhookMessage {
+public record WebhookMessage(Map<String, String> rawFields) {
 
-    private final Map<String, String> rawFields;
-
-    public WebhookMessage(Map<String, String> rawFields) {
-        this.rawFields = rawFields != null ? Collections.unmodifiableMap(new LinkedHashMap<>(rawFields)) : Map.of();
+    public WebhookMessage {
+        rawFields = rawFields != null ? Collections.unmodifiableMap(new LinkedHashMap<>(rawFields)) : Map.of();
     }
 
     /**

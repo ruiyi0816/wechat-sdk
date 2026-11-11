@@ -4,7 +4,7 @@
 
 ## 特性概览
 
-- **原生 JDK 21 支持**：基于 `java.net.http.HttpClient`、Java `record`、强类型模型构建，极简三方依赖（仅依赖 `jackson-databind` 与 `slf4j-api`）。
+- **原生 JDK 21 支持**：基于 `java.net.http.HttpClient`、Java `record`、文本块、switch 模式匹配等现代特性构建，极简三方依赖（仅依赖 `jackson-databind` 与 `slf4j-api`）。全项目 JDK 21 特性审计与用法见 [JDK21-FEATURES.md](JDK21-FEATURES.md)。
 - **AccessToken 与 Ticket 全生命周期管理**：
   - 内置线程安全的 `DefaultAccessTokenManager`，支持普通凭据（`/cgi-bin/token`）与稳定版凭据（`/cgi-bin/stable_token`）。
   - 支持预留过期缓冲窗口自动刷新，以及遇到 `40001` / `40014` / `42001` 错误码时自动刷新 Token 并无缝重试请求。
