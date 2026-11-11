@@ -26,13 +26,20 @@ public final class JsonUtils {
         return MAPPER;
     }
 
+    /**
+     * 序列化对象为 JSON 字符串。
+     * <p>使用 JDK 21 的 switch 模式匹配（JEP 441，含 {@code case null}）统一处理
+     * null、原始 JSON 字符串与普通对象三种情况。
+     */
     public static String toJson(Object obj) {
-        if (obj == null) {
-            return "{}";
-        }
-        if (obj instanceof String s) {
-            return s;
-        }
+        return switch (obj) {
+            case null -> "{}";
+            case String s -> s;
+            default -> serialize(obj);
+        };
+    }
+
+    private static String serialize(Object obj) {
         try {
             return MAPPER.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
